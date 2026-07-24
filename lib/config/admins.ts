@@ -1,9 +1,7 @@
-export const ADMIN_PHONES: string[] = [
-  "+919307736350",
-  // add more admin numbers here
+export const ADMIN_EMAILS: string[] = [
+  "kadam.shreyash.d@gmail.com", // ← replace with the real admin email
 ];
 
-export function isAdminPhone(phone: string): boolean {
-  const normalized = phone.replace(/\D/g, "").slice(-10);
-  return ADMIN_PHONES.some((p) => p.replace(/\D/g, "").slice(-10) === normalized);
+export function isAdminEmail(email: string): boolean {
+  return ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(email.toLowerCase());
 }

@@ -32,7 +32,7 @@ export async function proxy(request: NextRequest) {
   if (!user && path !== "/login") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-
+  
   return response;
 }
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { isAdminPhone } from "@/lib/config/admins";
+import { isAdminEmail } from "@/lib/config/admins";
 import { redirect } from "next/navigation";
 
 export async function syncRoleAndRedirect() {
@@ -10,13 +10,22 @@ export async function syncRoleAndRedirect() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !user.phone) {
+  if (!user || !user.email) {
     redirect("/login");
   }
 
-  const role = isAdminPhone(user.phone) ? "admin" : "customer";
+  const role = isAdminEmail(user.email) ? "admin" : "customer";
 
-  await supabase.from("profiles").update({ role }).eq("id", user.id);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .update({ role, email: user.email })
+    .eq("id", user.id)
+    .select("phone")
+    .single();
+
+  if (!profile?.phone) {
+    redirect("/complete-profile");
+  }
 
   redirect(role === "admin" ? "/dashboard" : "/my-bookings");
 }

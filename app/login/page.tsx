@@ -6,9 +6,9 @@ import { syncRoleAndRedirect } from "@/lib/actions/auth";
 import Image from "next/image";
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [step, setStep] = useState<"email" | "otp">("email");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,8 +17,7 @@ export default function LoginPage() {
   async function sendOtp() {
     setError("");
     setLoading(true);
-    const fullPhone = `+91${phone.replace(/\D/g, "")}`;
-    const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+    const { error } = await supabase.auth.signInWithOtp({ email });
     setLoading(false);
     if (error) {
       setError(error.message);
@@ -30,11 +29,10 @@ export default function LoginPage() {
   async function verifyOtp() {
     setError("");
     setLoading(true);
-    const fullPhone = `+91${phone.replace(/\D/g, "")}`;
     const { error } = await supabase.auth.verifyOtp({
-      phone: fullPhone,
+      email,
       token: otp,
-      type: "sms",
+      type: "email",
     });
     setLoading(false);
     if (error) {
@@ -46,21 +44,21 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black px-4">
-      <Image src="/logo.png" alt="Swaraj Scaffolding & Truss" width={100} height={100} />
+      <Image src="/logo.png" alt="Swaraj Scaffolding & Truss" width={100} height={100} style={{ width: "auto", height: "auto" }} />
       <h1 className="text-xl font-semibold text-white">Swaraj Scaffolding & Truss</h1>
 
-      {step === "phone" && (
+      {step === "email" && (
         <div className="flex w-full max-w-sm flex-col gap-3">
           <input
-            type="tel"
-            placeholder="10-digit phone number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="rounded-md border p-3"
           />
           <button
             onClick={sendOtp}
-            disabled={loading || phone.length < 10}
+            disabled={loading || !email.includes("@")}
             className="rounded-md bg-orange-500 p-3 font-medium text-white disabled:opacity-50"
           >
             {loading ? "Sending..." : "Send OTP"}
