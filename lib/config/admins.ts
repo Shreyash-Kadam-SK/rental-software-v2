@@ -1,5 +1,5 @@
 export const ADMIN_EMAILS: string[] = [
-  "kadam.shreyash.d@gmail.com", // ← replace with the real admin email
+  "kadam.shreyash.d@gmail.com",
 ];
 
 export function isAdminEmail(email: string): boolean {
