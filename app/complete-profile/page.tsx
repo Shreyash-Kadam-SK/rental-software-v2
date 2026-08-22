@@ -25,8 +25,10 @@ export default function CompleteProfilePage() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .update({ phone: `+91${phone.replace(/\D/g, "")}` })
-      .eq("id", user.id)
+      .upsert(
+        { id: user.id, phone: `+91${phone.replace(/\D/g, "")}` },
+        { onConflict: "id" }
+      )
       .select("role")
       .single();
 
